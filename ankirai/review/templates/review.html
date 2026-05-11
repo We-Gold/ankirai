@@ -43,8 +43,10 @@
 
 {# Inline edit form (hidden by default) #}
 <form action="/edit/{{ index }}" method="post" id="edit-form" style="display:none; margin-top:1.5rem">
-  <label>Front<textarea name="front" rows="3">{{ card.front }}</textarea></label>
-  <label>Back<textarea name="back" rows="3">{{ card.back }}</textarea></label>
+  <label>Front<textarea name="front" id="edit-front" rows="3">{{ card.front }}</textarea></label>
+  <div id="preview-front" class="card-front" style="min-height:2rem; padding:.5rem; border:1px solid var(--pico-muted-border-color); border-radius:var(--pico-border-radius); margin-top:-.75rem; margin-bottom:1rem"></div>
+  <label>Back<textarea name="back" id="edit-back" rows="3">{{ card.back }}</textarea></label>
+  <div id="preview-back" style="min-height:2rem; padding:.5rem; border:1px solid var(--pico-muted-border-color); border-radius:var(--pico-border-radius); margin-top:-.75rem; margin-bottom:1rem"></div>
   <div style="display:flex; gap:.5rem">
     <button type="submit" style="width:auto; margin-bottom:0">Save &amp; accept</button>
     <button type="button" onclick="hideEditForm()" class="secondary outline" style="width:auto; margin-bottom:0">Cancel</button>
@@ -52,9 +54,25 @@
 </form>
 
 <script>
+async function renderPreview(textareaId, previewId) {
+  const ta = document.getElementById(textareaId);
+  const preview = document.getElementById(previewId);
+  if (!ta || !preview) return;
+  preview.textContent = ta.value;
+  if (textareaId === 'edit-front') highlightCloze(preview);
+  if (window.MathJax) await MathJax.typesetPromise([preview]);
+}
+function initPreviews() {
+  ['front', 'back'].forEach(side => {
+    const ta = document.getElementById(`edit-${side}`);
+    if (ta) ta.addEventListener('input', () => renderPreview(`edit-${side}`, `preview-${side}`));
+    renderPreview(`edit-${side}`, `preview-${side}`);
+  });
+}
 function showEditForm() {
   document.getElementById('edit-form').style.display = 'block';
   document.getElementById('action-bar').style.display = 'none';
+  initPreviews();
 }
 function hideEditForm() {
   document.getElementById('edit-form').style.display = 'none';
