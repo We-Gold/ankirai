@@ -70,6 +70,7 @@ def init() -> None:
 )
 @click.option("--review", is_flag=True, help="Launch browser review UI before export")
 @click.option("--dry-run", is_flag=True, help="Print extracted text chunks; skip generation")
+@click.option("--instruct", "-i", default=None, help="Extra instructions appended to the prompt")
 def generate(
     inputs: tuple[str, ...],
     deck: str | None,
@@ -86,6 +87,7 @@ def generate(
     prompt_file: str | None,
     review: bool,
     dry_run: bool,
+    instruct: str | None,
 ) -> None:
     """Parse input files and generate an Anki deck."""
     from . import manifest as manifest_mod
@@ -101,6 +103,7 @@ def generate(
         batch_size=batch_size,
         prompt_file=prompt_file,
         parsing_model=parsing_model,
+        instruct=instruct,
     )
 
     extra_tags = [t.strip() for t in tags.split(",")] if tags else []

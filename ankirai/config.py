@@ -134,6 +134,7 @@ def load_config(
     batch_size: int | None = None,
     prompt_file: str | None = None,
     parsing_model: str | None = None,
+    instruct: str | None = None,
 ) -> Config:
     """Build a fully resolved Config from all priority sources."""
     load_dotenv()
@@ -215,6 +216,12 @@ def load_config(
             global_prompt = prompt_path()
             active_prompt = global_prompt.read_text() if global_prompt.exists() else DEFAULT_PROMPT
 
+    if instruct:
+        if "<notes>" in active_prompt:
+            active_prompt = active_prompt.replace("<notes>", instruct.strip() + "\n\n<notes>", 1)
+        else:
+            active_prompt = active_prompt + "\n\nAdditional instructions:\n" + instruct.strip()
+
     return Config(
         provider=resolved_provider,
         model=resolved_model,
@@ -224,4 +231,5 @@ def load_config(
         parsing_model=resolved_parsing_model,
         batch_size=resolved_batch,
         prompt=active_prompt,
+        instruct=instruct or "",
     )

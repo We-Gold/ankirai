@@ -36,3 +36,4 @@ class Config(BaseModel):
     parsing_model: str = ""
     batch_size: int = 15
     prompt: str = ""
+    instruct: str = ""

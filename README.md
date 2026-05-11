@@ -60,6 +60,7 @@ Parse one or more input files and generate an Anki deck.
 | `--prompt` | Path to a custom prompt file |
 | `--review` | Open browser review UI before exporting |
 | `--dry-run` | Print extracted text chunks to stdout; skip generation and export |
+| `--instruct`, `-i` | Extra instructions surrounded by quotes, appended to the active prompt for this run |
 
 ### `ankirai config show`
 
