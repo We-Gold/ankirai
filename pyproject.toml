@@ -1,6 +1,6 @@
 [project]
 name = "ankirai"
-version = "0.1.0"
+version = "0.0.1"
 description = "Transform your notes into Anki flashcards at lightning speed"
 readme = "README.md"
 license = "GPL-3.0-or-later"
