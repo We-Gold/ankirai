@@ -6,16 +6,20 @@ Transform your notes into Anki flashcards at lightning speed using any LLM provi
 
 ## Installation
 
-Requires Python 3.13+. Install with [uv](https://docs.astral.sh/uv/):
+ankirai is available on [PyPI](https://pypi.org/project/ankirai/). Requires Python 3.13+.
 
 ```bash
+# Recommended — installs into an isolated environment managed by uv
 uv tool install ankirai
+
+# Or with pip
+pip install ankirai
 ```
 
-Or clone and run locally:
+Or run directly from source:
 
 ```bash
-git clone <repo>
+git clone https://github.com/weavergoldman/ankirai
 cd ankirai
 uv run ankirai --help
 ```

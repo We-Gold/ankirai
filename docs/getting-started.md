@@ -6,17 +6,15 @@
 
 ## Installation
 
+ankirai is available on [PyPI](https://pypi.org/project/ankirai/). Requires Python 3.13+.
+
 ```bash
+# Recommended — installs into an isolated environment managed by uv
+uv tool install ankirai
+
+# Or with pip
 pip install ankirai
 ```
-
-Or with [uv](https://docs.astral.sh/uv/):
-
-```bash
-uv add ankirai
-```
-
-Requires Python 3.13+.
 
 ---
 
