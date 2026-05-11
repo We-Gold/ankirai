@@ -65,6 +65,8 @@ ankirai uses [markitdown](https://github.com/microsoft/markitdown) to parse docu
 | Images (PNG, JPG, etc.) | Requires a vision-capable model |
 | Handwritten notes | OCR via vision model |
 
+_If you use GoodNotes or something similar for handwritten notes, if you export them as PDFs, make sure to use "Enable Handwriting Recognition" or equivalent._
+
 ---
 
 ## Supported Providers
