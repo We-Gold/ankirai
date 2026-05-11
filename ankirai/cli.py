@@ -69,6 +69,7 @@ def init() -> None:
     help="Prompt file override",
 )
 @click.option("--review", is_flag=True, help="Launch browser review UI before export")
+@click.option("--dry-run", is_flag=True, help="Print extracted text chunks; skip generation")
 def generate(
     inputs: tuple[str, ...],
     deck: str | None,
@@ -84,6 +85,7 @@ def generate(
     parsing_model: str | None,
     prompt_file: str | None,
     review: bool,
+    dry_run: bool,
 ) -> None:
     """Parse input files and generate an Anki deck."""
     from . import manifest as manifest_mod
@@ -176,6 +178,14 @@ def generate(
     if not all_chunks:
         click.echo("No content extracted from input files.", err=True)
         raise SystemExit(1)
+
+    if dry_run:
+        click.echo(f"\n--- {len(all_chunks)} chunk(s) extracted ---\n")
+        for chunk in all_chunks:
+            click.echo(f"[{chunk.source_file} · chunk {chunk.chunk_index}]")
+            click.echo(chunk.text)
+            click.echo()
+        return
 
     # Generate
     all_cards = generate_cards(all_chunks, config)

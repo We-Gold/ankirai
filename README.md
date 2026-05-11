@@ -57,6 +57,7 @@ Parse one or more input files and generate an Anki deck.
 | `--parsing-model` | Use a separate model for image/PDF parsing |
 | `--prompt` | Path to a custom prompt file |
 | `--review` | Open browser review UI before exporting |
+| `--dry-run` | Print extracted text chunks to stdout; skip generation and export |
 
 ### `ankirai config show`
 
@@ -140,6 +141,13 @@ Only accepted cards are included in the exported deck.
 ## Manifest
 
 ankirai tracks which files have been processed in a `ankirai_manifest.json` in the working directory. Re-running `generate` on the same inputs skips unchanged files. Use `--force` to reprocess everything.
+
+## Documentation
+
+- [Getting Started](docs/getting-started.md)
+- [CLI Reference](docs/cli-reference.md)
+- [Configuration](docs/configuration.md)
+- [Review UI](docs/review-ui.md)
 
 ## Supported input formats
 

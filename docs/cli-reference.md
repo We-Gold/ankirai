@@ -41,6 +41,7 @@ ankirai generate <inputs>... [options]
 | `--parsing-model TEXT` | Config default | Use a separate model for markitdown image OCR |
 | `--prompt PATH` | Config default | Use a specific prompt file for this run |
 | `--review` | Off | Launch browser review UI before exporting |
+| `--dry-run` | Off | Print extracted text chunks to stdout; skip generation and export |
 
 ### Examples
 
