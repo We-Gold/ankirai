@@ -129,11 +129,26 @@ You can also place a `ankirai_prompt.md` file alongside your input files for a p
 
 ---
 
-## Incremental Workflows
+## Directory Input
 
-Generate multiple decks under the same name and import them all into Anki — ankirai derives stable GUIDs from each card's content, so Anki deduplicates on import automatically and won't create duplicate cards.
+Pass a folder instead of individual files to process everything inside it at once:
 
 ```bash
-ankirai generate lecture01.pdf --deck "BIOL 301"
-ankirai generate lecture02.pdf --deck "BIOL 301"
+ankirai generate lectures/ --deck "BIOL 301"
 ```
+
+ankirai recursively scans the folder, skips unsupported file types (with a log message), and excludes any `ankirai_prompt.md` files so a local prompt is never turned into flashcards.
+
+---
+
+## Incremental Workflows
+
+After a successful export, ankirai writes `ankirai_manifest.json` in the working directory. On subsequent runs, files whose content hasn't changed are skipped automatically:
+
+```bash
+ankirai generate lectures/ --deck "BIOL 301"   # processes all files, writes manifest
+ankirai generate lectures/ --deck "BIOL 301"   # skips unchanged files
+ankirai generate lectures/ --deck "BIOL 301" --force  # reprocesses everything
+```
+
+ankirai also derives stable GUIDs from each card's content, so importing multiple `.apkg` files with the same deck name into Anki is safe — Anki deduplicates on import and won't create duplicate cards.

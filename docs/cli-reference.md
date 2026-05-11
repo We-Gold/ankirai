@@ -22,7 +22,7 @@ ankirai generate <inputs>... [options]
 
 | Argument | Description |
 |---|---|
-| `inputs` | One or more file paths to parse (PDF, DOCX, images, Markdown, etc.) |
+| `inputs` | One or more file or directory paths to parse. Directories are scanned recursively; unsupported file types and `ankirai_prompt.md` files are excluded automatically. |
 
 ### Options
 
@@ -45,6 +45,12 @@ ankirai generate <inputs>... [options]
 ### Examples
 
 ```bash
+# Process all supported files in a folder
+ankirai generate lectures/ --deck "BIOL 301"
+
+# Reprocess everything, ignoring manifest
+ankirai generate lectures/ --deck "BIOL 301" --force
+
 # Single file, default output name
 ankirai generate lecture01.pdf --deck "Biochem"
 

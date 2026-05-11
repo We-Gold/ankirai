@@ -10,6 +10,12 @@ import click
 
 from .config import load_config, run_init, config_path, prompt_path, DEFAULT_PROMPT
 
+SUPPORTED_EXTENSIONS = {
+    ".pdf", ".docx", ".pptx", ".xlsx", ".txt", ".md", ".rtf", ".epub",
+    ".html", ".htm", ".csv", ".xml",
+    ".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tiff",
+}
+
 
 @click.group()
 def cli() -> None:
@@ -58,6 +64,8 @@ def generate(
     from .generate import generate_cards
     from .export import write_apkg, write_csv
 
+    from . import manifest as manifest_mod
+
     config = load_config(
         provider=provider,
         model=model,
@@ -70,8 +78,52 @@ def generate(
 
     extra_tags = [t.strip() for t in tags.split(",")] if tags else []
 
-    input_paths = [Path(i) for i in inputs]
-    deck_name = deck or input_paths[0].stem
+    deck_name = deck or Path(inputs[0]).stem
+
+    # Expand directories; track which manifest each file belongs to.
+    # Directory inputs → manifest lives inside that directory.
+    # Bare file inputs → manifest lives in cwd.
+    raw_paths: list[Path] = []
+    file_to_manifest: dict[Path, Path] = {}
+    for i in inputs:
+        p = Path(i)
+        if p.is_dir():
+            manifest_p = (p / "ankirai_manifest.json").resolve()
+            for f in sorted(p.rglob("*")):
+                raw_paths.append(f)
+                file_to_manifest[f.resolve()] = manifest_p
+        else:
+            manifest_p = Path("ankirai_manifest.json").resolve()
+            raw_paths.append(p)
+            file_to_manifest[p.resolve()] = manifest_p
+
+    # Apply extension allowlist and prompt/manifest exclusion
+    input_paths: list[Path] = []
+    for f in raw_paths:
+        if not f.is_file():
+            continue
+        if f.name in {"ankirai_prompt.md", "ankirai_manifest.json"}:
+            continue
+        if f.suffix.lower() not in SUPPORTED_EXTENSIONS:
+            click.echo(f"  skipping unsupported file type: {f.name}", err=True)
+            continue
+        input_paths.append(f)
+
+    # Load all relevant manifests
+    manifests: dict[Path, dict] = {}
+    for mp in set(file_to_manifest.values()):
+        manifests[mp] = manifest_mod.load(mp)
+
+    # Skip already-processed files (unless --force)
+    if not force:
+        skipped = [f for f in input_paths if manifest_mod.is_processed(manifests[file_to_manifest[f.resolve()]], f)]
+        input_paths = [f for f in input_paths if not manifest_mod.is_processed(manifests[file_to_manifest[f.resolve()]], f)]
+        if skipped:
+            click.echo(f"  skipping {len(skipped)} already-processed file(s) (use --force to reprocess)")
+
+    if not input_paths:
+        click.echo("No files to process.")
+        return
 
     # Resolve output path
     if output:
@@ -80,10 +132,11 @@ def generate(
         suffix = {"apkg": ".apkg", "csv": ".csv", "tsv": ".tsv"}[output_format]
         output_path = Path(deck_name.replace(" ", "_") + suffix)
 
-    # Parse
+    # Parse — record each file into its manifest as we go
     all_chunks = []
     for path in input_paths:
         all_chunks.extend(parse_file(path, config))
+        manifest_mod.record(manifests[file_to_manifest[path.resolve()]], path)
 
     if not all_chunks:
         click.echo("No content extracted from input files.", err=True)
@@ -112,6 +165,10 @@ def generate(
         write_csv(all_cards, output_path, delimiter=",")
     elif output_format == "tsv":
         write_csv(all_cards, output_path, delimiter="\t")
+
+    # Persist all manifests only after successful export
+    for mp, mdata in manifests.items():
+        manifest_mod.save(mdata, mp)
 
 
 @cli.group("config")
