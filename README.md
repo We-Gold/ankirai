@@ -32,6 +32,8 @@ ankirai generate notes.pdf            # generate an Anki deck (.apkg)
 ankirai generate notes.pdf --review   # review cards in the browser before exporting
 ```
 
+_I recommend using Google's AI Studio for your API key, since the free usage limit for Gemini 3.1 Flash Lite (the default Gemini model) is quite generous._
+
 ## Commands
 
 ### `ankirai init`
