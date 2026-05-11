@@ -22,7 +22,7 @@ jobs:
           git commit -m "chore: bump version to $VERSION [skip ci]"
           git push origin HEAD:main
       - name: Build
-        run: uv build
+        run: make build
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
