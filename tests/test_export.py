@@ -59,3 +59,35 @@ def test_write_tsv_creates_file(sample_cards, tmp_path):
     assert out.exists()
     content = out.read_text()
     assert "\t" in content
+
+
+def test_write_tsv_no_commas_in_data_row(sample_cards, tmp_path):
+    out = tmp_path / "test.tsv"
+    write_csv(sample_cards, out, delimiter="\t")
+    lines = out.read_text().splitlines()
+    # Skip header; check first data row has no comma (tags are semicolon-separated)
+    assert "," not in lines[1]
+
+
+def test_write_apkg_with_cloze_card(tmp_path):
+    from ankirai.models import Card
+
+    cards = [
+        Card(
+            front="The {{c1::mitochondria}} is the powerhouse.",
+            back="",
+            is_cloze=True,
+            source_file="bio.pdf",
+        )
+    ]
+    out = tmp_path / "cloze.apkg"
+    write_apkg(cards, "Bio Deck", out)
+    assert out.exists()
+    assert zipfile.is_zipfile(out)
+
+
+def test_deck_id_differs_by_name(tmp_path):
+    from ankirai.export import _deck_id
+
+    assert _deck_id("Deck A") != _deck_id("Deck B")
+    assert _deck_id("Deck A") == _deck_id("Deck A")

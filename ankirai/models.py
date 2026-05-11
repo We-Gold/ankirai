@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class Card(BaseModel):
@@ -36,7 +36,3 @@ class Config(BaseModel):
     parsing_model: str = ""
     batch_size: int = 15
     prompt: str = ""
-    deck_name: str = "ankirai Deck"
-    output_format: str = "apkg"
-    output_path: str = ""
-    extra_tags: list[str] = Field(default_factory=list)

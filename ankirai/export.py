@@ -34,8 +34,12 @@ _BASIC_MODEL = genanki.Model(
 )
 
 
+def _deck_id(deck_name: str) -> int:
+    return int(hashlib.md5(deck_name.encode()).hexdigest()[:8], 16)
+
+
 def write_apkg(cards: list[Card], deck_name: str, output_path: Path) -> None:
-    deck = genanki.Deck(2059400110, deck_name)
+    deck = genanki.Deck(_deck_id(deck_name), deck_name)
 
     for card in cards:
         guid = stable_guid(card.front, card.source_file)

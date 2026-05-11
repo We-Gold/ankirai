@@ -92,3 +92,38 @@ def test_bulk_page_renders(client):
     resp = client.get("/bulk")
     assert resp.status_code == 200
     assert "All cards" in resp.text
+
+
+def test_root_redirects_to_review_0(client):
+    _setup()
+    resp = client.get("/")
+    assert resp.status_code == 200
+    assert "Q0" in resp.text  # followed redirect to /review/0
+
+
+def test_accept_redirects_to_next_pending(client):
+    state = _setup(_make_cards(3))
+    # After accepting card 0, next pending is card 1
+    resp = client.post("/accept/0")
+    assert state.statuses[0] == "accepted"
+    assert "/review/1" in str(resp.url)
+
+
+def test_next_pending_wraps_around(client):
+    state = _setup(_make_cards(3))
+    state.statuses[1] = "accepted"
+    state.statuses[2] = "accepted"
+    # Accepting card 0 — no later pending, should wrap to bulk (all done)
+    resp = client.post("/accept/0")
+    assert "/bulk" in str(resp.url)
+
+
+def test_bulk_pagination(client):
+    from ankirai.review.server import PAGE_SIZE
+
+    cards = _make_cards(PAGE_SIZE + 10)
+    _setup(cards)
+    resp = client.get("/bulk?page=1")
+    assert resp.status_code == 200
+    # Page 2 should show card index PAGE_SIZE (0-based)
+    assert f"Q{PAGE_SIZE}" in resp.text
