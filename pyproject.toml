@@ -1,0 +1,37 @@
+[project]
+name = "ankirai"
+version = "0.1.0"
+description = "Transform your notes into Anki flashcards at lightning speed"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "markitdown[all]",
+    "pydantic-ai",
+    "genanki",
+    "python-dotenv",
+    "openai",
+    "click",
+    "platformdirs",
+    "pydantic",
+    "tqdm",
+    "fastapi",
+    "uvicorn",
+    "jinja2",
+]
+
+[project.scripts]
+ankirai = "ankirai.cli:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+]

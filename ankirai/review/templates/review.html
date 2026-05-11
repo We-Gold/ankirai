@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+
+<article>
+  <header>
+    <div style="display:flex; justify-content:space-between; align-items:center">
+      <small>Card {{ index + 1 }} of {{ total }}</small>
+      <span class="status-badge badge-{{ status }}">{{ status }}</span>
+    </div>
+  </header>
+
+  <p><strong>Front</strong></p>
+  <p class="card-front">{{ card.front }}</p>
+
+  {% if not card.is_cloze and card.back %}
+  <p><strong>Back</strong></p>
+  <p class="card-back">{{ card.back }}</p>
+  {% endif %}
+
+  {% if card.tags %}
+  <p><small>Tags: {{ card.tags | join(", ") }}</small></p>
+  {% endif %}
+</article>
+
+{# Action buttons #}
+<div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; margin-top:1rem" id="action-bar">
+  <form action="/accept/{{ index }}" method="post" style="margin:0; display:contents">
+    <button type="submit" style="width:auto; margin-bottom:0; background:#059669; border-color:#059669; color:#fff">Accept <kbd>1</kbd></button>
+  </form>
+  <button onclick="showEditForm()" class="secondary" style="width:auto; margin-bottom:0">Edit <kbd>2</kbd></button>
+  <form action="/reject/{{ index }}" method="post" style="margin:0; display:contents">
+    <button type="submit" style="width:auto; margin-bottom:0; background:#dc2626; border-color:#dc2626; color:#fff">Reject <kbd>3</kbd></button>
+  </form>
+  {% set prev = index - 1 %}
+  {% if prev >= 0 %}
+  <a id="btn-prev" href="/review/{{ prev }}" role="button" class="outline secondary" style="margin-bottom:0">← Prev <kbd>[</kbd></a>
+  {% endif %}
+  {% set nxt = index + 1 %}
+  {% if nxt < total %}
+  <a id="btn-next" href="/review/{{ nxt }}" role="button" class="outline secondary" style="margin-bottom:0">Next → <kbd>]</kbd></a>
+  {% endif %}
+</div>
+
+{# Inline edit form (hidden by default) #}
+<form action="/edit/{{ index }}" method="post" id="edit-form" style="display:none; margin-top:1.5rem">
+  <label>Front<textarea name="front" rows="3">{{ card.front }}</textarea></label>
+  <label>Back<textarea name="back" rows="3">{{ card.back }}</textarea></label>
+  <div style="display:flex; gap:.5rem">
+    <button type="submit" style="width:auto; margin-bottom:0">Save &amp; accept</button>
+    <button type="button" onclick="hideEditForm()" class="secondary outline" style="width:auto; margin-bottom:0">Cancel</button>
+  </div>
+</form>
+
+<script>
+function showEditForm() {
+  document.getElementById('edit-form').style.display = 'block';
+  document.getElementById('action-bar').style.display = 'none';
+}
+function hideEditForm() {
+  document.getElementById('edit-form').style.display = 'none';
+  document.getElementById('action-bar').style.display = 'flex';
+}
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const key = e.key;
+  if (key === '1') document.querySelector('form[action*="/accept/"]')?.submit();
+  if (key === '2') showEditForm();
+  if (key === '3') document.querySelector('form[action*="/reject/"]')?.submit();
+  if (key === '[' || key === 'ArrowLeft') document.getElementById('btn-prev')?.click();
+  if (key === ']' || key === 'ArrowRight') document.getElementById('btn-next')?.click();
+});
+</script>
+{% endblock %}

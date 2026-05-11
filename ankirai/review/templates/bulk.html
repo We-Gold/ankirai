@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem">
+  <h2 style="margin:0">All cards</h2>
+  <form action="/bulk/accept-all" method="post" style="margin:0">
+    <button type="submit" class="outline" style="width:auto; margin-bottom:0">Accept all pending</button>
+  </form>
+</div>
+
+<figure>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Front</th>
+        <th>Back</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for i, (card, status) in enumerated %}
+      <tr>
+        <td style="vertical-align:middle">{{ i + 1 }}</td>
+        <td style="vertical-align:middle">{{ card.front[:80] }}{% if card.front | length > 80 %}…{% endif %}</td>
+        <td style="vertical-align:middle">{{ card.back[:80] }}{% if card.back | length > 80 %}…{% endif %}</td>
+        <td style="vertical-align:middle"><span class="status-badge badge-{{ status }}">{{ status }}</span></td>
+        <td style="vertical-align:middle">
+          <a href="/review/{{ i }}" role="button" class="outline secondary" style="padding:.2rem .6rem; font-size:.8rem; margin-bottom:0">View</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</figure>
+
+<div style="text-align:right; margin-top:1rem">
+  <form action="/export" method="post" style="margin:0; display:inline">
+    <button type="submit" class="contrast" data-pending="{{ pending }}">Export {{ accepted }} cards</button>
+  </form>
+</div>
+
+{% if total_pages > 1 %}
+<div style="display:flex; justify-content:center; gap:.5rem; align-items:center; margin-top:1rem">
+  {% if page > 0 %}
+  <a href="/bulk?page={{ page - 1 }}" role="button" class="outline secondary" style="margin-bottom:0">← Prev</a>
+  {% endif %}
+  <small>Page {{ page + 1 }} of {{ total_pages }}</small>
+  {% if page + 1 < total_pages %}
+  <a href="/bulk?page={{ page + 1 }}" role="button" class="outline secondary" style="margin-bottom:0">Next →</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}
