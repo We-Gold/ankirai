@@ -24,11 +24,13 @@ _BASIC_MODEL = genanki.Model(
     1607392319,
     "ankirai Basic",
     fields=[{"name": "Front"}, {"name": "Back"}, {"name": "Tags"}],
-    templates=[{
-        "name": "Card 1",
-        "qfmt": "{{Front}}",
-        "afmt": "{{FrontSide}}<hr id='answer'>{{Back}}",
-    }],
+    templates=[
+        {
+            "name": "Card 1",
+            "qfmt": "{{Front}}",
+            "afmt": "{{FrontSide}}<hr id='answer'>{{Back}}",
+        }
+    ],
 )
 
 
@@ -65,10 +67,12 @@ def write_csv(cards: list[Card], output_path: Path, delimiter: str = ",") -> Non
         writer = csv.writer(f, delimiter=delimiter)
         writer.writerow(["front", "back", "tags", "source_file"])
         for card in cards:
-            writer.writerow([
-                card.front,
-                card.back,
-                ";".join(card.tags),
-                card.source_file,
-            ])
+            writer.writerow(
+                [
+                    card.front,
+                    card.back,
+                    ";".join(card.tags),
+                    card.source_file,
+                ]
+            )
     click.echo(f"Exported {len(cards)} cards to {output_path}")

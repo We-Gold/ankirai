@@ -28,7 +28,7 @@ Run the interactive setup wizard to configure your provider and API key:
 $ ankirai init
 
 Welcome to ankirai!
-Default provider [gemini/openai/anthropic/openrouter/ollama]: gemini
+Default provider [gemini/openai/openrouter/ollama]: gemini
 Gemini API key: ••••••••••••••••••••••••
 
 Config saved to ~/Library/Application Support/ankirai/config.toml
@@ -75,9 +75,10 @@ ankirai uses [markitdown](https://github.com/microsoft/markitdown) to parse docu
 |---|---|---|
 | **Gemini** (default) | `GEMINI_API_KEY` env var or `ankirai init` | `gemini-3.1-flash-lite` |
 | **OpenAI** | `OPENAI_API_KEY` | `gpt-5.4-nano` |
-| **Anthropic** | `ANTHROPIC_API_KEY` | `claude-haiku-4-5-20251001` |
 | **OpenRouter** | `OPENROUTER_API_KEY` | Any model via single key |
 | **Ollama** | Local server at `http://localhost:11434` | `llama4` |
+
+> **Claude / Anthropic models**: Use OpenRouter — set `--provider openrouter --model anthropic/claude-haiku-4-5`.
 
 Switch providers per-run with `--provider`:
 

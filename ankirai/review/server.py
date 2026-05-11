@@ -7,12 +7,12 @@ from __future__ import annotations
 
 import math
 import threading
+import webbrowser
 from dataclasses import dataclass, field
 from pathlib import Path
 
 import click
 import uvicorn
-import webbrowser
 from fastapi import FastAPI, Form, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -50,10 +50,16 @@ def _progress(state: ReviewState) -> dict:
     accepted = state.statuses.count("accepted")
     rejected = state.statuses.count("rejected")
     total = len(state.statuses)
-    return {"accepted": accepted, "rejected": rejected, "total": total, "pending": total - accepted - rejected}
+    return {
+        "accepted": accepted,
+        "rejected": rejected,
+        "total": total,
+        "pending": total - accepted - rejected,
+    }
 
 
 # ── Routes ─────────────────────────────────────────────────────────────────
+
 
 @app.get("/", response_class=RedirectResponse)
 def root():
@@ -66,13 +72,17 @@ def review_card(request: Request, index: int):
     if index < 0 or index >= len(state.cards):
         return RedirectResponse("/bulk")
     progress = _progress(state)
-    return _TEMPLATES.TemplateResponse(request, "review.html", {
-        "card": state.cards[index],
-        "index": index,
-        "status": state.statuses[index],
-        "total": len(state.cards),
-        **progress,
-    })
+    return _TEMPLATES.TemplateResponse(
+        request,
+        "review.html",
+        {
+            "card": state.cards[index],
+            "index": index,
+            "status": state.statuses[index],
+            "total": len(state.cards),
+            **progress,
+        },
+    )
 
 
 @app.post("/accept/{index}", response_class=RedirectResponse)
@@ -109,13 +119,17 @@ def bulk_view(request: Request, page: int = Query(0)):
     total_pages = max(1, math.ceil(len(all_enumerated) / PAGE_SIZE))
     page = max(0, min(page, total_pages - 1))
     enumerated = all_enumerated[page * PAGE_SIZE : (page + 1) * PAGE_SIZE]
-    return _TEMPLATES.TemplateResponse(request, "bulk.html", {
-        "enumerated": enumerated,
-        "page": page,
-        "total_pages": total_pages,
-        "is_bulk": True,
-        **progress,
-    })
+    return _TEMPLATES.TemplateResponse(
+        request,
+        "bulk.html",
+        {
+            "enumerated": enumerated,
+            "page": page,
+            "total_pages": total_pages,
+            "is_bulk": True,
+            **progress,
+        },
+    )
 
 
 @app.post("/bulk/accept-all", response_class=RedirectResponse)
@@ -140,12 +154,17 @@ def export(request: Request):
     state: ReviewState = app.state.review
     state.done.set()
     accepted = state.statuses.count("accepted")
-    return _TEMPLATES.TemplateResponse(request, "exporting.html", {
-        "accepted": accepted,
-    })
+    return _TEMPLATES.TemplateResponse(
+        request,
+        "exporting.html",
+        {
+            "accepted": accepted,
+        },
+    )
 
 
 # ── Public lifecycle ────────────────────────────────────────────────────────
+
 
 def run_review_server(cards: list[Card]) -> list[Card]:
     """Start the review UI, block until the user exports, return accepted cards."""
@@ -159,6 +178,7 @@ def run_review_server(cards: list[Card]) -> list[Card]:
 
     # Give server a moment to bind before opening browser
     import time
+
     time.sleep(0.5)
 
     click.echo("  Opening review UI at http://localhost:5173")

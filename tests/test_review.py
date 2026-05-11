@@ -1,7 +1,5 @@
 """Tests for the review server routes (no browser, no threading)."""
 
-import threading
-
 import pytest
 from fastapi.testclient import TestClient
 
@@ -29,6 +27,7 @@ def client():
 
 
 # ── Route tests ─────────────────────────────────────────────────────────────
+
 
 def test_accept_marks_card_accepted(client):
     state = _setup()

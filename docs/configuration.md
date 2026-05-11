@@ -23,7 +23,7 @@ default = "gemini"   # active provider
 
 ### `[providers.<name>]`
 
-One section per provider you want to configure. Valid names: `gemini`, `openai`, `anthropic`, `openrouter`, `ollama`.
+One section per provider you want to configure. Valid names: `gemini`, `openai`, `openrouter`, `ollama`.
 
 ```toml
 [providers.gemini]
@@ -51,7 +51,7 @@ parsing_model     = ""    # separate model for image/PDF OCR (optional)
 
 | Key | Type | Default | Description |
 |---|---|---|---|
-| `batch_size_online` | int | `15` | Request size for Gemini, OpenAI, Anthropic, OpenRouter |
+| `batch_size_online` | int | `15` | Request size for Gemini, OpenAI, OpenRouter |
 | `batch_size_local` | int | `5` | Request size for Ollama |
 | `parsing_model` | string | `""` | If set, used only for markitdown OCR; main model is used for card generation |
 
@@ -92,6 +92,18 @@ default_model = "llama4"
 vision        = false
 ```
 
+### Claude / Anthropic models via OpenRouter
+
+```toml
+[providers]
+default = "openrouter"
+
+[providers.openrouter]
+api_key       = "sk-or-..."
+default_model = "anthropic/claude-haiku-4-5"
+base_url      = "https://openrouter.ai/api/v1"
+```
+
 ### Smaller batches to avoid rate limits
 
 ```toml
@@ -120,7 +132,6 @@ Settings can also be provided via environment variables or a `.env` file in the 
 |---|---|
 | `GEMINI_API_KEY` | Gemini API key |
 | `OPENAI_API_KEY` | OpenAI API key |
-| `ANTHROPIC_API_KEY` | Anthropic API key |
 | `OPENROUTER_API_KEY` | OpenRouter API key |
 | `ANKIRAI_PROVIDER` | Active provider override |
 | `ANKIRAI_MODEL` | Model override |

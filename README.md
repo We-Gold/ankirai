@@ -42,7 +42,7 @@ Parse one or more input files and generate an Anki deck.
 |---|---|
 | `--deck`, `-d` | Deck name (default: first filename stem) |
 | `--model`, `-m` | Model override |
-| `--provider`, `-p` | Provider override (`gemini`, `openai`, `anthropic`, `openrouter`, `ollama`) |
+| `--provider`, `-p` | Provider override (`gemini`, `openai`, `openrouter`, `ollama`) |
 | `--api-key` | API key override |
 | `--format` | Output format: `apkg` (default), `csv`, `tsv` |
 | `--output`, `-o` | Output file path |
@@ -64,7 +64,7 @@ Update a single config value, e.g.:
 
 ```bash
 ankirai config set openai.api_key sk-...
-ankirai config set providers.default anthropic
+ankirai config set providers.default openrouter
 ```
 
 ### `ankirai prompt show`
@@ -85,9 +85,10 @@ Restore the built-in default prompt.
 |---|---|---|
 | `gemini` | `GEMINI_API_KEY` | `gemini-3.1-flash-lite` |
 | `openai` | `OPENAI_API_KEY` | `gpt-5.4-nano` |
-| `anthropic` | `ANTHROPIC_API_KEY` | `claude-haiku-4-5-20251001` |
 | `openrouter` | `OPENROUTER_API_KEY` | `google/gemini-3.1-flash-lite` |
 | `ollama` | *(none)* | `llama4` |
+
+> **Claude / Anthropic models**: Use OpenRouter with `--provider openrouter --model anthropic/claude-haiku-4-5`.
 
 API keys can also be set via environment variables or a `.env` file in the working directory.
 

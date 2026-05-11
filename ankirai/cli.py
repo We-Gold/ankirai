@@ -8,12 +8,28 @@ from pathlib import Path
 
 import click
 
-from .config import load_config, run_init, config_path, prompt_path, DEFAULT_PROMPT
+from .config import DEFAULT_PROMPT, config_path, load_config, prompt_path, run_init
 
 SUPPORTED_EXTENSIONS = {
-    ".pdf", ".docx", ".pptx", ".xlsx", ".txt", ".md", ".rtf", ".epub",
-    ".html", ".htm", ".csv", ".xml",
-    ".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tiff",
+    ".pdf",
+    ".docx",
+    ".pptx",
+    ".xlsx",
+    ".txt",
+    ".md",
+    ".rtf",
+    ".epub",
+    ".html",
+    ".htm",
+    ".csv",
+    ".xml",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    ".gif",
+    ".bmp",
+    ".tiff",
 }
 
 
@@ -34,14 +50,24 @@ def init() -> None:
 @click.option("--model", "-m", default=None, help="Model to use")
 @click.option("--provider", "-p", default=None, help="Provider override")
 @click.option("--api-key", default=None, help="API key override")
-@click.option("--format", "output_format", default="apkg", type=click.Choice(["apkg", "csv", "tsv"]))
+@click.option(
+    "--format", "output_format", default="apkg", type=click.Choice(["apkg", "csv", "tsv"])
+)
 @click.option("--output", "-o", default=None, type=click.Path(), help="Output file path")
 @click.option("--batch-size", default=None, type=int, help="Cards per LLM request")
 @click.option("--force", is_flag=True, help="Ignore manifest; reprocess all files")
 @click.option("--tags", default=None, help="Comma-separated tags to apply to all cards")
 @click.option("--vision/--no-vision", default=None, help="Override vision capability")
-@click.option("--parsing-model", default=None, help="Use a different model for markitdown image parsing")
-@click.option("--prompt", "prompt_file", default=None, type=click.Path(exists=True), help="Prompt file override")
+@click.option(
+    "--parsing-model", default=None, help="Use a different model for markitdown image parsing"
+)
+@click.option(
+    "--prompt",
+    "prompt_file",
+    default=None,
+    type=click.Path(exists=True),
+    help="Prompt file override",
+)
 @click.option("--review", is_flag=True, help="Launch browser review UI before export")
 def generate(
     inputs: tuple[str, ...],
@@ -60,11 +86,10 @@ def generate(
     review: bool,
 ) -> None:
     """Parse input files and generate an Anki deck."""
-    from .parse import parse_file
-    from .generate import generate_cards
-    from .export import write_apkg, write_csv
-
     from . import manifest as manifest_mod
+    from .export import write_apkg, write_csv
+    from .generate import generate_cards
+    from .parse import parse_file
 
     config = load_config(
         provider=provider,
@@ -116,10 +141,20 @@ def generate(
 
     # Skip already-processed files (unless --force)
     if not force:
-        skipped = [f for f in input_paths if manifest_mod.is_processed(manifests[file_to_manifest[f.resolve()]], f)]
-        input_paths = [f for f in input_paths if not manifest_mod.is_processed(manifests[file_to_manifest[f.resolve()]], f)]
+        skipped = [
+            f
+            for f in input_paths
+            if manifest_mod.is_processed(manifests[file_to_manifest[f.resolve()]], f)
+        ]
+        input_paths = [
+            f
+            for f in input_paths
+            if not manifest_mod.is_processed(manifests[file_to_manifest[f.resolve()]], f)
+        ]
         if skipped:
-            click.echo(f"  skipping {len(skipped)} already-processed file(s) (use --force to reprocess)")
+            click.echo(
+                f"  skipping {len(skipped)} already-processed file(s) (use --force to reprocess)"
+            )
 
     if not input_paths:
         click.echo("No files to process.")
@@ -152,6 +187,7 @@ def generate(
     # Review (optional)
     if review:
         from .review.server import run_review_server
+
         all_cards = run_review_server(all_cards)
         click.echo(f"  Review complete. {len(all_cards)} cards accepted.")
         if not all_cards:
@@ -180,13 +216,14 @@ def config_group() -> None:
 def config_show() -> None:
     """Print current config with API keys redacted."""
     import re
+
     cfg = config_path()
     if not cfg.exists():
         click.echo("No config file found. Run 'ankirai init' first.")
         return
     text = cfg.read_text()
     # Redact values on lines containing api_key
-    text = re.sub(r'(api_key\s*=\s*")[^"]*(")', r'\1***\2', text)
+    text = re.sub(r'(api_key\s*=\s*")[^"]*(")', r"\1***\2", text)
     click.echo(text)
 
 
@@ -195,7 +232,10 @@ def config_show() -> None:
 @click.argument("value")
 def config_set(key: str, value: str) -> None:
     """Update a config value (e.g. 'openai.api_key sk-...')."""
-    import tomllib, tomli_w  # type: ignore[import]
+    import tomllib
+
+    import tomli_w  # type: ignore[import]
+
     cfg = config_path()
     if not cfg.exists():
         click.echo("No config file found. Run 'ankirai init' first.")
@@ -229,7 +269,9 @@ def prompt_show() -> None:
 @prompt_group.command("edit")
 def prompt_edit() -> None:
     """Open the global prompt in $EDITOR."""
-    import os, subprocess
+    import os
+    import subprocess
+
     p = prompt_path()
     if not p.exists():
         p.write_text(DEFAULT_PROMPT)

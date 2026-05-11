@@ -1,8 +1,5 @@
 import csv
 import zipfile
-from pathlib import Path
-
-import pytest
 
 from ankirai.export import stable_guid, write_apkg, write_csv
 

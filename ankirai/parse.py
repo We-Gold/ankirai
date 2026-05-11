@@ -6,7 +6,6 @@ Wraps markitdown; returns list[Chunk] ready for generate.py.
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
 
 import click
@@ -50,6 +49,7 @@ def parse_file(file_path: Path, config: Config) -> list[Chunk]:
 
     if config.vision and config.api_key:
         from openai import OpenAI
+
         vision_model = config.parsing_model or config.model
         base_url = config.base_url or None
 

@@ -48,12 +48,11 @@ Choosing card type:
 DEFAULT_MODELS = {
     "gemini": "gemini-3.1-flash-lite",
     "openai": "gpt-5.4-nano",
-    "anthropic": "claude-haiku-4-5-20251001",
     "openrouter": "google/gemini-3.1-flash-lite",
     "ollama": "llama4",
 }
 
-ONLINE_PROVIDERS = {"gemini", "openai", "anthropic", "openrouter"}
+ONLINE_PROVIDERS = {"gemini", "openai", "openrouter"}
 
 
 def config_dir() -> Path:
@@ -78,7 +77,7 @@ def _ensure_prompt_file() -> None:
 def run_init() -> None:
     """Interactive first-time setup. Writes config.toml."""
     print("Welcome to ankirai!")
-    providers = ["gemini", "openai", "anthropic", "openrouter", "ollama"]
+    providers = ["gemini", "openai", "openrouter", "ollama"]
     provider_list = "/".join(providers)
     provider = input(f"Default provider [{provider_list}]: ").strip() or "gemini"
     if provider not in providers:
@@ -88,6 +87,7 @@ def run_init() -> None:
     api_key = ""
     if provider != "ollama":
         import getpass
+
         label = f"{provider.capitalize()} API key"
         api_key = getpass.getpass(f"{label}: ").strip()
 
@@ -150,9 +150,7 @@ def load_config(
 
     # Resolve provider
     resolved_provider = (
-        provider
-        or os.environ.get("ANKIRAI_PROVIDER")
-        or providers_section.get("default", "gemini")
+        provider or os.environ.get("ANKIRAI_PROVIDER") or providers_section.get("default", "gemini")
     )
 
     provider_cfg = providers_section.get(resolved_provider, {})
@@ -161,14 +159,11 @@ def load_config(
     env_key_map = {
         "gemini": "GEMINI_API_KEY",
         "openai": "OPENAI_API_KEY",
-        "anthropic": "ANTHROPIC_API_KEY",
         "openrouter": "OPENROUTER_API_KEY",
     }
     env_key_name = env_key_map.get(resolved_provider, "ANKIRAI_API_KEY")
     resolved_api_key = (
-        api_key
-        or os.environ.get(env_key_name, "")
-        or provider_cfg.get("api_key", "")
+        api_key or os.environ.get(env_key_name, "") or provider_cfg.get("api_key", "")
     )
 
     # Resolve model

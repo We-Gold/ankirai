@@ -30,7 +30,7 @@ ankirai generate <inputs>... [options]
 |---|---|---|
 | `--deck, -d TEXT` | Input filename stem | Anki deck name |
 | `--model, -m TEXT` | Config default | Model to use (e.g. `gemini-2.0-flash-lite`) |
-| `--provider, -p TEXT` | Config default | Provider override (`gemini`, `openai`, `anthropic`, `openrouter`, `ollama`) |
+| `--provider, -p TEXT` | Config default | Provider override (`gemini`, `openai`, `openrouter`, `ollama`) |
 | `--api-key TEXT` | Config / env var | API key override for this run |
 | `--format [apkg\|csv\|tsv]` | `apkg` | Output format |
 | `--output, -o PATH` | Auto-named from deck | Output file path |
@@ -143,7 +143,6 @@ For any setting, ankirai resolves the value in this order (highest to lowest):
 |---|---|
 | `GEMINI_API_KEY` | Gemini API key |
 | `OPENAI_API_KEY` | OpenAI API key |
-| `ANTHROPIC_API_KEY` | Anthropic API key |
 | `OPENROUTER_API_KEY` | OpenRouter API key |
 | `ANKIRAI_PROVIDER` | Default provider override |
 | `ANKIRAI_MODEL` | Default model override |

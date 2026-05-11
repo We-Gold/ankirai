@@ -1,5 +1,6 @@
 import pytest
-from ankirai.models import Card, Config, Chunk
+
+from ankirai.models import Card, Chunk, Config
 
 
 @pytest.fixture
@@ -17,15 +18,39 @@ def sample_config() -> Config:
 @pytest.fixture
 def sample_cards() -> list[Card]:
     return [
-        Card(front="What is a primary key?", back="A unique identifier for a row.", tags=["database"], source_file="notes.pdf"),
-        Card(front="The {{c1::selection}} operator filters rows.", back="", tags=["relational-algebra"], is_cloze=True, source_file="notes.pdf"),
-        Card(front="What is normalization?", back="Organizing a DB to reduce redundancy.", tags=["database"], source_file="notes.pdf"),
+        Card(
+            front="What is a primary key?",
+            back="A unique identifier for a row.",
+            tags=["database"],
+            source_file="notes.pdf",
+        ),
+        Card(
+            front="The {{c1::selection}} operator filters rows.",
+            back="",
+            tags=["relational-algebra"],
+            is_cloze=True,
+            source_file="notes.pdf",
+        ),
+        Card(
+            front="What is normalization?",
+            back="Organizing a DB to reduce redundancy.",
+            tags=["database"],
+            source_file="notes.pdf",
+        ),
     ]
 
 
 @pytest.fixture
 def sample_chunks() -> list[Chunk]:
     return [
-        Chunk(text="# Databases\nA database is an organized collection of data.", source_file="notes.pdf", chunk_index=0),
-        Chunk(text="# SQL\nSELECT retrieves rows from a table.", source_file="notes.pdf", chunk_index=1),
+        Chunk(
+            text="# Databases\nA database is an organized collection of data.",
+            source_file="notes.pdf",
+            chunk_index=0,
+        ),
+        Chunk(
+            text="# SQL\nSELECT retrieves rows from a table.",
+            source_file="notes.pdf",
+            chunk_index=1,
+        ),
     ]
